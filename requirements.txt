@@ -1,3 +1,4 @@
-torch
-zetascale
 swarms
+loguru
+pydantic
+yfinance
