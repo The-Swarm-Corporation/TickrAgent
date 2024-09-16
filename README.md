@@ -37,28 +37,24 @@ from tickr_agent.main import TickrAgent
 from loguru import logger
 
 # Example Usage
-if __name__ == "__main__":
-    try:
-        # Define stock tickers
-        stocks = ["NVDA"]
+# Define stock tickers
+stocks = ["NVDA", "CEG"]
 
-        # Initialize the agent and configure the settings
-        agent = TickrAgent(
-            stocks=stocks,
-            max_loops=1,          # Maximum number of loops
-            workers=10,           # Number of threads for concurrent execution
-            retry_attempts=1,      # Retry attempts for failed requests
-            context_length=16000,  # Maximum context length for AI models
-        )
+# Run the financial analysis and save to JSON
+# result = run_financial_analysis(stocks, output_file)
+agent = TickrAgent(
+    stocks=stocks,
+    max_loops=1,
+    workers=10,
+    retry_attempts=1,
+    context_length=16000,
+)
 
-        # Run the financial analysis and obtain the result
-        result = agent.run("Conduct an analysis of this summary")
+result = agent.run("Conduct an analysis on this stock and show me if it's a buy or not and why")
 
-        # Output the result
-        print(result)
+# Output the result
+print(result)
 
-    except Exception as e:
-        logger.critical(f"Critical error in financial agent execution: {e}")
 ```
 
 ### How It Works

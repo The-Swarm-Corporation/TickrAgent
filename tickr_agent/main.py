@@ -159,8 +159,6 @@ class TickrAgent:
 
             logger.info(f"Successfully retrieved data for {ticker}")
 
-            # Conver the stock_data into a string
-            # stock_data_string = json.dumps(stock_data)
             return stock_data  # , stock_data_string
 
         except Exception as e:
