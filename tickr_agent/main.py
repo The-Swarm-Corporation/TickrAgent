@@ -14,6 +14,7 @@ from swarms.models.base_llm import BaseLLM
 from swarms.prompts.finance_agent_sys_prompt import (
     FINANCIAL_AGENT_SYS_PROMPT,
 )
+from swarms.utils.file_processing import create_file_in_folder
 
 load_dotenv()
 
@@ -61,7 +62,7 @@ class TickrAgent:
         workers: int = 10,
         retry_attempts: int = 1,
         context_length: int = 16000,
-        output_file: str = "stock_data.json",
+        output_file: str = None,
     ):
         self.stocks = stocks
         self.max_loops = max_loops
@@ -393,5 +394,14 @@ class TickrAgent:
 
     def run(self, task: str, *args, **kwargs):
         self.run_many_stocks_concurrently(task, *args, **kwargs)
-        return self.mult_stock_log.model_dump_json(indent=4)
 
+        output_data = self.mult_stock_log.model_dump_json(indent=4)
+
+        if self.output_file is not None:
+            create_file_in_folder(
+                folder_path=os.getenv("WORKSPACE_DIR"),
+                file_name=self.output_file,
+                content=output_data,
+            )
+
+        return output_data

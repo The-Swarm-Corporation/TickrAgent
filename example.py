@@ -5,7 +5,7 @@ from loguru import logger
 if __name__ == "__main__":
     try:
         # Define stock tickers
-        stocks = ["NVDA"]
+        stocks = ["NVDA", "CEG"]
 
         # Run the financial analysis and save to JSON
         # result = run_financial_analysis(stocks, output_file)

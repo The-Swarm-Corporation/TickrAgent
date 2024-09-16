@@ -136,7 +136,14 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-Join our discord for real-time support or email me 
+Join our discord for real-time support or email me at kye@swarms.world
+
+
+# Todo
+
+- [ ] Implement a better prompt with instructions and multi-shot examples
+- [ ] Implement more stock data and or richer financial calculations
+- [ ] Implement a multi-agent implementation to predict stock price will go up or down
 
 
 # License
