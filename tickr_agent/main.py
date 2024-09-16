@@ -1,4 +1,3 @@
-import json
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -152,13 +151,16 @@ class TickrAgent:
                 "industry": info.get("industry", "N/A"),
                 "company_name": info.get("longName", "N/A"),
                 "summary": info.get("longBusinessSummary", "N/A"),
+                "volume": info.get("volume", "N/A"),  # Added volume
+                "implied_volatility": info.get(
+                    "impliedVolatility", "N/A"
+                ),  # Added implied volatility
             }
 
             logger.info(f"Successfully retrieved data for {ticker}")
 
             # Conver the stock_data into a string
-            stock_data_string = json.dumps(stock_data)
-
+            # stock_data_string = json.dumps(stock_data)
             return stock_data  # , stock_data_string
 
         except Exception as e:
@@ -188,6 +190,28 @@ class TickrAgent:
                         f"Error processing {futures[future]}: {e}"
                     )
         return results
+
+    def format_data_for_agent(self, data: Dict, level: int = 0):
+        rows = []
+        indent = " " * (
+            level * 4
+        )  # Indentation for nested dictionaries
+
+        # Iterate over the dictionary and format each key-value pair
+        for key, value in data.items():
+            if isinstance(value, dict):
+                # If the value is a nested dictionary, recursively format it
+                rows.append(f"{indent}{key}:")
+                rows.append(
+                    self.format_data_for_agent(value, level + 1)
+                )
+            else:
+                rows.append(f"{indent}{key}: {value}")
+
+        # Join all the rows together with newlines
+        formatted_string = "\n".join(rows)
+
+        return formatted_string
 
     # def validate_and_save_stock_data(
     #     self, stocks: List[str], output_file: str
@@ -244,38 +268,36 @@ class TickrAgent:
         ValueError: If the stock data list is empty or invalid.
         """
         try:
-            summary = "Stock Positions Summary:\n"
-            # for stock in stocks_data:
-            #     if "error" not in stock:
-            #         summary += (
-            #             f"Ticker: {stock['ticker']}\n"
-            #             f"Current Price: ${stock['price']:,.2f}\n"
-            #             f"Market Cap: ${stock['market_cap']:,}\n"
-            #             f"P/E Ratio: {stock['pe_ratio']}\n"
-            #             f"EPS: {stock['eps']}\n"
-            #             f"Dividend Yield: {stock['dividend_yield']}\n"
-            #             f"RSI: {stock['rsi']}\n"
-            #             f"50-Day MA: ${stock['ma_50']:,.2f}\n"
-            #             f"200-Day MA: ${stock['ma_200']:,.2f}\n"
-            #             f"Short-Term Trend: {stock['short_term_trend']}\n"
-            #             f"Sector: {stock['sector']}\n"
-            #             f"Industry: {stock['industry']}\n"
-            #             f"Company Name: {stock['company_name']}\n"
-            #             f"Summary: {stock['summary']}\n"
-            #             f"{'-' * 40}\n"
-            #         )
-            # summary += self.fetch_stock_data(stock)
+            # Initialize the summary with the stock name
+            summary = f"Stock {stock} Positions Summary:\n"
+
+            # Fetch stock data
             stock_data = self.fetch_stock_data(stock)
-            summary += json.dumps(stock_data)
-            summary += "Note: Stocks with RSI > 70 may be overbought; those with RSI < 30 may be oversold.\n"
+
+            # Format the stock data for the agent
+            stock_data = self.format_data_for_agent(stock_data)
+
+            # Print the formatted stock data
+            print(stock_data)
+
+            # Add the formatted stock data to the summary
+            summary += stock_data
+
+            # Add a note about RSI to the summary
+            summary += "\n Note: Stocks with RSI > 70 may be overbought; those with RSI < 30 may be oversold.\n"
+
+            # Log the summary
             logger.info(summary)
+
+            # Return the summary
             return summary
         except Exception as e:
+            # Log and raise any exceptions
             logger.error(f"Error summarizing stock positions: {e}")
             raise
 
     # Initialize the financial agent
-    def initialize_agent(self) -> Agent:
+    def initialize_agent(self, *args, **kwargs) -> Agent:
         """
         Initializes the financial analysis agent with the OpenAIChat model and configuration.
 
@@ -300,14 +322,16 @@ class TickrAgent:
                 llm=self.llm,
                 max_loops=self.max_loops,
                 autosave=True,
-                dashboard=False,
-                verbose=True,
+                # dashboard=False,
+                # verbose=True,
                 dynamic_temperature_enabled=True,
                 saved_state_path="finance_agent.json",
                 user_name="swarms_corp",
                 retry_attempts=1,
                 context_length=self.context_length,
                 return_step_meta=False,
+                *args,
+                **kwargs,
             )
 
             logger.info(
@@ -318,7 +342,9 @@ class TickrAgent:
             logger.error(f"Error initializing agent: {e}")
             raise
 
-    def run_one_stock(self, task: str, stock: str) -> str:
+    def run_one_stock(
+        self, task: str, stock: str, *args, **kwargs
+    ) -> str:
         """
         Runs a full financial analysis using the stock data and GPT-based agent.
 
@@ -341,7 +367,7 @@ class TickrAgent:
             stock_summary = self.summarize_stock_positions(stock)
 
             # Initialize the agent
-            agent = self.initialize_agent()
+            agent = self.initialize_agent(*args, **kwargs)
 
             # Send the stock summary to the agent as context for the task
             full_task = f"{task}\n\nHere is the summary of the stock positions:\n{stock_summary}"
