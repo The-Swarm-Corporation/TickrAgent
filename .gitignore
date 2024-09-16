@@ -9,6 +9,7 @@ __pycache__/
 .vscode
 
 # Distribution / packaging
+agent_workspace
 .Python
 build/
 develop-eggs/
