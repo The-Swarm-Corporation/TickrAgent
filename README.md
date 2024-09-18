@@ -28,6 +28,15 @@ To install `tickr-agent`, simply run:
 $ pip3 install -U tickr-agent
 ```
 
+## Envs
+In your `.env` file you need 
+
+```
+WORKSPACE_DIR=""
+OPENAI_API_KEY=""
+
+```
+
 ## Getting Started
 
 ### Basic Example: Running Financial Analysis on a Single Stock

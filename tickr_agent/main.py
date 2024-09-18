@@ -10,10 +10,8 @@ from loguru import logger
 from pydantic import BaseModel, Field
 from swarms import Agent, OpenAIChat
 from swarms.models.base_llm import BaseLLM
-from swarms.prompts.finance_agent_sys_prompt import (
-    FINANCIAL_AGENT_SYS_PROMPT,
-)
 from swarms.utils.file_processing import create_file_in_folder
+from tickr_agent.prompt import SYS_PROMPT
 
 load_dotenv()
 
@@ -54,7 +52,7 @@ class TickrAgent:
     def __init__(
         self,
         agent_name: str = "Financial-Analysis-Agent",
-        system_prompt: str = FINANCIAL_AGENT_SYS_PROMPT,
+        system_prompt: str = SYS_PROMPT,
         llm: BaseLLM = model,
         stocks: List[str] = [],
         max_loops: int = 1,
