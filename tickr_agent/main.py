@@ -8,7 +8,9 @@ import yfinance as yf
 from dotenv import load_dotenv
 from loguru import logger
 from pydantic import BaseModel, Field
-from swarms import Agent, OpenAIChat
+# from swarms import Agent, OpenAIChat
+from swarms import Agent
+from swarms import OpenAIChat
 from swarms.models.base_llm import BaseLLM
 from swarms.utils.file_processing import create_file_in_folder
 from tickr_agent.prompt import SYS_PROMPT
@@ -48,7 +50,7 @@ class MultiStockTickrAgentOutput(BaseModel):
     )
 
 
-class TickrAgent:
+class TickrAgent(Agent):
     def __init__(
         self,
         agent_name: str = "Financial-Analysis-Agent",
@@ -60,6 +62,7 @@ class TickrAgent:
         retry_attempts: int = 1,
         context_length: int = 16000,
         output_file: str = None,
+        return_json_on: bool = False
     ):
         self.stocks = stocks
         self.max_loops = max_loops
@@ -70,6 +73,7 @@ class TickrAgent:
         self.retry_attempts = retry_attempts
         self.context_length = context_length
         self.agent_name = agent_name
+        self.return_json_on = return_json_on
 
         self.mult_stock_log = MultiStockTickrAgentOutput(
             logs=[], time_stamp=time.strftime("%Y-%m-%d %H:%M:%S")
@@ -426,4 +430,8 @@ class TickrAgent:
                 content=output_data,
             )
 
-        return output_data
+        if self.return_json_on:
+            return output_data
+        else:
+            return output_data
+            # return self.mult_stock_log.__str__

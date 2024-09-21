@@ -98,6 +98,7 @@ agent = TickrAgent(
     workers=10,
     retry_attempts=1,
     context_length=16000,
+    return_json_on = False
 )
 
 result = agent.run(
