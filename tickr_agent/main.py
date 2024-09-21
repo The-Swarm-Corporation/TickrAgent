@@ -10,8 +10,7 @@ from loguru import logger
 from pydantic import BaseModel, Field
 # from swarms import Agent, OpenAIChat
 from swarms import Agent
-from swarms import OpenAIChat
-from swarms.models.base_llm import BaseLLM
+from swarm_models import OpenAIChat, BaseLLM
 from swarms.utils.file_processing import create_file_in_folder
 from tickr_agent.prompt import SYS_PROMPT
 
