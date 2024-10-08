@@ -128,6 +128,20 @@ if __name__ == "__main__":
 
 Logs are saved to `financial_agent_log.log` by default. Customize the logging configuration to integrate with your enterprise logging systems.
 
+
+## Docker
+
+```bash
+docker build -t tickr-agent-api .
+```
+
+### Run
+
+```bash
+docker run -d -p 8000:8000 tickr-agent-api
+
+```
+
 ## Contributing
 
 Contributions are welcome! If you would like to contribute, please open an issue or submit a pull request to the GitHub repository. We follow standard Python development practices and require tests for all new features.
