@@ -2,3 +2,8 @@ swarms
 loguru
 pydantic
 yfinance
+aiocache
+tenacity
+uvicorn
+swarm_models
+fastapi
