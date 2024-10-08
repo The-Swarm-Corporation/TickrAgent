@@ -194,6 +194,6 @@ if __name__ == "__main__":
     uvicorn.run(
         "main:app",  # This refers to the FastAPI app created earlier
         host="0.0.0.0",  # Bind to all available interfaces
-        port=8000,  # Port to run the app
+        port=8080,  # Port to run the app
         reload=True  # Enable auto-reloading for development
     )
