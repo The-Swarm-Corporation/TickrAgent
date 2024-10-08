@@ -8,6 +8,7 @@ from loguru import logger
 from pydantic import BaseModel, Field, validator
 from tenacity import RetryError, retry, stop_after_attempt, wait_fixed
 from tickr_agent.main import TickrAgent
+import uvicorn
 
 app = FastAPI()
 
@@ -184,3 +185,15 @@ async def log_request_data(request, call_next):
     )
 
     return response
+
+# The rest of your code remains the same...
+
+if __name__ == "__main__":
+    logger.info("Starting TickrAgent API with Uvicorn...")
+
+    uvicorn.run(
+        "main:app",  # This refers to the FastAPI app created earlier
+        host="0.0.0.0",  # Bind to all available interfaces
+        port=8000,  # Port to run the app
+        reload=True  # Enable auto-reloading for development
+    )
